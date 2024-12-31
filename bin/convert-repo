@@ -1,0 +1,117 @@
+#!/bin/bash
+
+# Check if the correct number of arguments are provided
+if [ $# -ne 6 ]; then
+    echo "Usage: $0 <new_project_name> <version> <date> <name> <email> <website>"
+    exit 1
+fi
+
+# The new project name, version, date, name, email, website, tag, and remote repository URL passed as arguments
+NEW_PROJECT_NAME="$1"
+VERSION="$2"
+DATE="$3"
+NAME="$4"
+EMAIL="$5"
+WEBSITE="$6"
+
+TAG="template-base"
+REMOTE_REPO_URL="https://github.com/contactandyc/a-template-library.git"
+
+# Extract the year from the date (first 4 characters)
+YEAR=$(echo "$DATE" | cut -c1-4)
+
+# Convert to the other variations of the name
+NEW_PROJECT_NAME_CAMEL=$(echo "$NEW_PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/ //g')
+NEW_PROJECT_NAME_HYPHENATED=$(echo "$NEW_PROJECT_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g' | tr '[:upper:]' '[:lower:]')
+
+# Predefined list of files to process
+FILES_TO_PROCESS=(
+  "./README.md"
+  "./NEWS.md"
+  "./NOTICE"
+  "./AUTHORS"
+  "./_config.yml"
+  "./.changes/template_version.md"
+  "./tests/CMakeLists.txt"
+  "./CMakeLists.txt"
+)
+
+# Clone the remote repository (if not already cloned)
+if [ ! -d "temp_repo" ]; then
+    git clone "$REMOTE_REPO_URL" temp_repo
+else
+    echo "Repository already cloned, pulling the latest changes."
+    cd temp_repo && git pull origin main && cd ..
+fi
+
+# Checkout the files from the specified tag or branch
+cd temp_repo || exit 1
+git fetch --tags
+
+# Loop through each file in the list
+for FILE in "${FILES_TO_PROCESS[@]}"; do
+  # Check if the file exists in the remote repo before attempting to process it
+  if git ls-tree -r "$TAG" --name-only | grep -q "$FILE"; then
+    echo "Checking out $FILE from tag $TAG"
+    git checkout "$TAG" -- "$FILE"
+
+    # Copy the checked-out file to the current repo
+    cp "$FILE" "../$FILE"
+  else
+    echo "Warning: $FILE does not exist in the remote repo at tag $TAG. Skipping."
+  fi
+done
+
+# Check if the checkout was successful
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to checkout files from tag $TAG. Please make sure the tag exists in the remote repository."
+  exit 1
+fi
+
+cd ..
+
+# Perform the replacements in the files copied to the current repo
+for FILE in "${FILES_TO_PROCESS[@]}"; do
+  # Check if the file exists before attempting to process it
+  if [ -f "$FILE" ]; then
+    echo "Processing file: $FILE"
+
+    # Replace project name variations in the file
+    sed -i '' -e "s/The Template Library/$NEW_PROJECT_NAME/g" "$FILE"
+    sed -i '' -e "s/the-template-library/$NEW_PROJECT_NAME_HYPHENATED/g" "$FILE"
+    sed -i '' -e "s/thetemplatelibrary/$NEW_PROJECT_NAME_CAMEL/g" "$FILE"
+
+    # Replace version, year, and date placeholders
+    sed -i '' -e "s/template_version/$VERSION/g" "$FILE"
+    sed -i '' -e "s/template_year/$YEAR/g" "$FILE"
+    sed -i '' -e "s/template_date/$DATE/g" "$FILE"
+
+    # Replace name and email placeholders
+    sed -i '' -e "s/template_name/$NAME/g" "$FILE"
+    sed -i '' -e "s/template_email/$EMAIL/g" "$FILE"
+    sed -i '' -e "s@template_website@$WEBSITE@g" "$FILE"
+  else
+    echo "Warning: $FILE does not exist after checkout. Skipping."
+  fi
+done
+
+# Copy the version file from the temp_repo to the local repository and rename it
+cp "temp_repo/.changes/template_version.md" "./.changes/$VERSION.md"
+rm -f .changes/template_version.md
+
+# Check if the current repo is 'a-template-library' and remove the .git directory if so
+REPO_NAME=$(basename $(git rev-parse --show-toplevel))
+
+if [ "$REPO_NAME" == "a-template-library" ]; then
+    echo "This repository is 'a-template-library'. Removing the .git directory..."
+    rm -rf .git
+    git init
+    git add .
+    git commit -m "first commit"
+    git branch -M main
+fi
+
+echo "Repository updated with new project name: $NEW_PROJECT_NAME, version: $VERSION, date: $DATE, name: $NAME, and email: $EMAIL"
+
+# Clean up by removing the temporary repository clone
+rm -rf temp_repo
