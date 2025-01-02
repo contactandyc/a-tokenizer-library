@@ -1,9 +1,9 @@
-# Overview of A Template Library
+# Overview of A Tokenizer Library
 
 ## Setting up repo
 
 ```bash
-git clone https://github.com/contactandyc/a-template-library.git your-new-library
+git clone https://github.com/contactandyc/a-tokenizer-library.git your-new-library
 ./bin/convert-repo "Your New Library" 3.2.1 2024-12-30 "Andy Curtis" "contactandyc@gmail.com" "linkedin.com/in/andycurtis"
 ```
 

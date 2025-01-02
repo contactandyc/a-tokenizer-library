@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Project Configuration
-project(atemplatelibrary VERSION 0.1.1)
+project(atokenizerlibrary VERSION 0.1.1)
 
 # Variables
-set(INCLUDE_DIR_NAME "a-template-library")
+set(INCLUDE_DIR_NAME "a-tokenizer-library")
 set(EXTRA_FILES README.md AUTHORS NEWS.md CHANGELOG.md LICENSE NOTICE)
 set(INSTALL_LIBDIR lib)
 set(INSTALL_INCLUDEDIR include)

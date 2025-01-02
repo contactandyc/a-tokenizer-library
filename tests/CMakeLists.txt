@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 # Enable testing
 enable_testing()
 
-set(LIB_TO_TEST atemplatelibrary)
+set(LIB_TO_TEST atokenizerlibrary)
 
 # Options
 option(USE_STATIC_LIB "Link against static library" OFF)
