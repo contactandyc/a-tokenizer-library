@@ -1,17 +1,5 @@
-# Overview of A Tokenizer Library
+# Overview of A Template Library
 
-## Setting up repo
-
-```bash
-git clone https://github.com/contactandyc/a-tokenizer-library.git your-new-library
-./bin/convert-repo "Your New Library" 3.2.1 2024-12-30 "Andy Curtis" "contactandyc@gmail.com" "linkedin.com/in/andycurtis"
-```
-
-Set remote origin and push
-```bash
-git remote add origin https://github.com/contactandyc/your-new-library.git
-git push -u origin main
-```
 
 ## Building
 
@@ -39,3 +27,45 @@ ctest
 make coverage
 ```
 
+### Sample usage
+
+See tests/src/parse.c and tests/src/parse_expression.c for sample usage.
+
+Build tests
+```bash
+cd build
+cmake BUILD_TESTING=ON ..
+make
+cd tests
+```
+
+Test an expression
+```bash
+$ ./parse_expression '(a OR b c d OR d) not "e g"'
+not
+	"
+		e
+		g
+	(
+		or
+			a
+			(
+				b
+				c
+				d
+			d
+```
+
+Test parsing this README file
+```bash
+$ ./parse ../../README.md
+Overview
+of
+A
+Template
+Library
+Building
+Build
+and
+Install
+```

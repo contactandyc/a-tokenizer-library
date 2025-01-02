@@ -49,13 +49,15 @@ endif()
 # Include directories for the main library
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+find_package(ajsonlibrary REQUIRED)
+
 # Determine which library to link against
 if(USE_STATIC_LIB)
-    set(LIB_TO_LINK ${LIB_TO_TEST}::${LIB_TO_TEST})
-elif(USE_SHARED_LIB)
-    set(LIB_TO_LINK ${LIB_TO_TEST}::shared)
+    set(LIB_TO_LINK ${LIB_TO_TEST}::${LIB_TO_TEST} ajsonlibrary_static)
+elseif(USE_SHARED_LIB)
+    set(LIB_TO_LINK ${LIB_TO_TEST}::shared ajsonlibrary_static)
 else()
-    set(LIB_TO_LINK ${LIB_TO_TEST}::debug)
+    set(LIB_TO_LINK ${LIB_TO_TEST}::debug ajsonlibrary_debug)
 endif()
 
 # Add test executables
@@ -66,8 +68,16 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
     # Add executable for the test
     add_executable(${TEST_NAME} ${TEST_SOURCE})
 
+    if(USE_STATIC_LIB)
+        target_compile_options(${TEST_NAME} PRIVATE -O3)
+    else()
+        target_compile_definitions(${TEST_NAME} PUBLIC -D_AML_DEBUG_)
+        target_compile_options(${TEST_NAME} PRIVATE -g -O0)
+    endif()
+
     # Link against the chosen library
     target_link_libraries(${TEST_NAME} PRIVATE ${LIB_TO_LINK})
+
 
     # Add coverage flags if enabled
     if(ENABLE_CODE_COVERAGE)
