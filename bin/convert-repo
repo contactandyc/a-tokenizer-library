@@ -77,9 +77,9 @@ for FILE in "${FILES_TO_PROCESS[@]}"; do
     echo "Processing file: $FILE"
 
     # Replace project name variations in the file
-    sed -i '' -e "s/The Template Library/$NEW_PROJECT_NAME/g" "$FILE"
-    sed -i '' -e "s/the-template-library/$NEW_PROJECT_NAME_HYPHENATED/g" "$FILE"
-    sed -i '' -e "s/thetemplatelibrary/$NEW_PROJECT_NAME_CAMEL/g" "$FILE"
+    sed -i '' -e "s/A Template Library/$NEW_PROJECT_NAME/g" "$FILE"
+    sed -i '' -e "s/a-template-library/$NEW_PROJECT_NAME_HYPHENATED/g" "$FILE"
+    sed -i '' -e "s/atemplatelibrary/$NEW_PROJECT_NAME_CAMEL/g" "$FILE"
 
     # Replace version, year, and date placeholders
     sed -i '' -e "s/template_version/$VERSION/g" "$FILE"
