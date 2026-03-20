@@ -50,8 +50,11 @@ find_package(a_memory_library CONFIG REQUIRED)
 
 # ---- Dependencies (PkgConfig Shims) ----
 
+
 # ── Library variants (ALL are defined & built/installed) ──────────────────────
-add_library(a_tokenizer_library_debug  src/atl_cursor.c  src/atl_token.c)
+
+add_library(a_tokenizer_library_debug STATIC
+  src/atl_cursor.c  src/atl_token.c)
 
 target_include_directories(a_tokenizer_library_debug PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -85,7 +88,9 @@ install(TARGETS a_tokenizer_library_debug EXPORT a_tokenizer_libraryTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(a_tokenizer_library_memory  src/atl_cursor.c  src/atl_token.c)
+
+add_library(a_tokenizer_library_memory STATIC
+  src/atl_cursor.c  src/atl_token.c)
 
 target_include_directories(a_tokenizer_library_memory PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -122,7 +127,9 @@ install(TARGETS a_tokenizer_library_memory EXPORT a_tokenizer_libraryTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(a_tokenizer_library_static  src/atl_cursor.c  src/atl_token.c)
+
+add_library(a_tokenizer_library_static STATIC
+  src/atl_cursor.c  src/atl_token.c)
 
 target_include_directories(a_tokenizer_library_static PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -156,7 +163,9 @@ install(TARGETS a_tokenizer_library_static EXPORT a_tokenizer_libraryTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-add_library(a_tokenizer_library_shared  src/atl_cursor.c  src/atl_token.c)
+
+add_library(a_tokenizer_library_shared SHARED
+  src/atl_cursor.c  src/atl_token.c)
 
 target_include_directories(a_tokenizer_library_shared PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
