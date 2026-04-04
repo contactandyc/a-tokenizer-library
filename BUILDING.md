@@ -1,7 +1,7 @@
 # BUILDING
 
 This project: **A Tokenizer Library**
-Version: **0.1.0**
+Version: **0.1.2**
 
 ## Local build
 
@@ -22,6 +22,13 @@ sudo cmake --install .
 
 
 ## Install dependencies (from `deps.libraries`)
+
+
+### System packages (required)
+
+```bash
+sudo apt-get update && sudo apt-get install -y zlib1g-dev
+```
 
 
 
@@ -58,5 +65,42 @@ cd "a-memory-library"
 ./build.sh install
 cd ..
 rm -rf "a-memory-library"
+```
+
+
+### the-lz4-library
+
+Clone & build:
+
+```bash
+git clone --depth 1 --single-branch "https://github.com/contactandyc/the-lz4-library.git" "the-lz4-library"
+cd "the-lz4-library"
+./build.sh clean
+./build.sh install
+cd ..
+rm -rf "the-lz4-library"
+```
+
+
+### ZLIB
+
+Install via package manager:
+
+```bash
+sudo apt-get update && sudo apt-get install -y zlib1g-dev
+```
+
+
+### the-io-library
+
+Clone & build:
+
+```bash
+git clone --depth 1 --single-branch "https://github.com/contactandyc/the-io-library.git" "the-io-library"
+cd "the-io-library"
+./build.sh clean
+./build.sh install
+cd ..
+rm -rf "the-io-library"
 ```
 
