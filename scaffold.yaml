@@ -1,5 +1,5 @@
 project_title: A Tokenizer Library
-version: 0.1.0
+version: 0.1.1
 stack: c/cmake
 date_created: 2019-08-01
 profile: default-knode
@@ -9,5 +9,6 @@ base_templates:
   ref: main
 
 depends_on:
+  - https://github.com/contactandyc/the-io-library.git
   - https://github.com/contactandyc/the-macro-library.git
   - https://github.com/contactandyc/a-memory-library.git
