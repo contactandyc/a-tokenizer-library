@@ -9,5 +9,6 @@ base_templates:
   ref: main
 
 depends_on:
+  - https://github.com/contactandyc/the-io-library.git
   - https://github.com/contactandyc/the-macro-library.git
   - https://github.com/contactandyc/a-memory-library.git
