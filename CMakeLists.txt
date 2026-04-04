@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(a_tokenizer_library
-  VERSION 0.1.0
+  VERSION 0.1.2
   LANGUAGES C
 )
 # ── Variant selection for the umbrella alias ──────────────────────────────────
@@ -42,6 +42,7 @@ endif()
 include(GNUInstallDirs)
 
 # ---- Dependencies (Standard CMake) ----
+find_package(the_io_library CONFIG REQUIRED)
 find_package(the_macro_library CONFIG REQUIRED)
 find_package(a_memory_library CONFIG REQUIRED)
 
@@ -73,6 +74,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 target_link_libraries(a_tokenizer_library_debug PUBLIC
+  the_io_library::the_io_library
   the_macro_library::the_macro_library
   a_memory_library::a_memory_library
 )
@@ -109,6 +111,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 target_link_libraries(a_tokenizer_library_memory PUBLIC
+  the_io_library::the_io_library
   the_macro_library::the_macro_library
   a_memory_library::a_memory_library
 )
@@ -148,6 +151,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 target_link_libraries(a_tokenizer_library_static PUBLIC
+  the_io_library::the_io_library
   the_macro_library::the_macro_library
   a_memory_library::a_memory_library
 )
@@ -184,6 +188,7 @@ if("CXX" IN_LIST CMAKE_PROJECT_LANGUAGES)
 endif()
 
 target_link_libraries(a_tokenizer_library_shared PUBLIC
+  the_io_library::the_io_library
   the_macro_library::the_macro_library
   a_memory_library::a_memory_library
 )
@@ -250,7 +255,7 @@ endif()
 
 set(A_BUILD_TARGET_BASENAME "a_tokenizer_library")
 set(A_BUILD_EXPORT_NAMESPACE "a_tokenizer_library")
-set(A_BUILD_DEPS "the_macro_library;a_memory_library")
+set(A_BUILD_DEPS "the_io_library;the_macro_library;a_memory_library")
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(
