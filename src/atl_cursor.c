@@ -9,7 +9,6 @@
 #include "a-memory-library/aml_alloc.h"
 #include "a-memory-library/aml_pool.h"
 #include "a-memory-library/aml_buffer.h"
-#include "search-index-library/sil_term.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -440,6 +439,14 @@ atl_cursor_t *atl_cursor_init_and(aml_pool_t *pool) {
 
 
 // ---------------------------------------------------------
+// POSITION TRACKER STRUCT
+// ---------------------------------------------------------
+typedef struct {
+    uint32_t *current;
+    uint32_t *end;
+} pos_tracker_t;
+
+// ---------------------------------------------------------
 // PHRASE CURSOR IMPLEMENTATION
 // ---------------------------------------------------------
 
@@ -447,34 +454,28 @@ static bool verify_phrase_positions(atl_cursor_t **cursors, uint32_t num_cursors
     if (num_cursors == 0) return false;
     if (num_cursors == 1) return true;
 
+    pos_tracker_t trackers[32];
+    if (num_cursors > 32) return false;
+
     for (uint32_t i = 0; i < num_cursors; i++) {
-        if (cursors[i]->type == TERM_CURSOR) {
-            sil_term_decode_positions((sil_term_t *)cursors[i]);
+        if (cursors[i]->decode_positions) {
+            cursors[i]->decode_positions(cursors[i], &trackers[i].current, &trackers[i].end);
+            if (trackers[i].current == trackers[i].end) return false;
         } else {
             return false;
         }
     }
 
-    sil_term_t *first_term = (sil_term_t *)cursors[0];
-    uint32_t *p0 = first_term->term_positions;
-    uint32_t *p0_end = first_term->term_positions_end;
-
-    while (p0 < p0_end) {
-        uint32_t target_pos = *p0 + 1;
+    while (trackers[0].current < trackers[0].end) {
+        uint32_t target_pos = *(trackers[0].current) + 1;
         bool match = true;
 
         for (uint32_t i = 1; i < num_cursors; i++) {
-            sil_term_t *next_term = (sil_term_t *)cursors[i];
-            uint32_t *pn = next_term->term_positions;
-            uint32_t *pn_end = next_term->term_positions_end;
-
-            while (pn < pn_end && *pn < target_pos) {
-                pn++;
+            while (trackers[i].current < trackers[i].end && *(trackers[i].current) < target_pos) {
+                trackers[i].current++;
             }
 
-            next_term->term_positions = pn;
-
-            if (pn == pn_end || *pn != target_pos) {
+            if (trackers[i].current == trackers[i].end || *(trackers[i].current) != target_pos) {
                 match = false;
                 break;
             }
@@ -482,7 +483,7 @@ static bool verify_phrase_positions(atl_cursor_t **cursors, uint32_t num_cursors
         }
 
         if (match) return true;
-        p0++;
+        trackers[0].current++;
     }
 
     return false;
@@ -538,11 +539,6 @@ typedef struct {
     double score;
 } proximity_cursor_t;
 
-typedef struct {
-    uint32_t *current;
-    uint32_t *end;
-} pos_tracker_t;
-
 // Mode 1: Fast Exit - Checks if ANY valid window exists
 static bool verify_proximity_positions_boolean(proximity_cursor_t *prox, atl_cursor_t **cursors, uint32_t num_cursors) {
     if (num_cursors == 0) return false;
@@ -552,11 +548,8 @@ static bool verify_proximity_positions_boolean(proximity_cursor_t *prox, atl_cur
     if (num_cursors > 32) return false;
 
     for (uint32_t i = 0; i < num_cursors; i++) {
-        if (cursors[i]->type == TERM_CURSOR) {
-            sil_term_t *term = (sil_term_t *)cursors[i];
-            sil_term_decode_positions(term);
-            trackers[i].current = term->term_positions;
-            trackers[i].end = term->term_positions_end;
+        if (cursors[i]->decode_positions) {
+            cursors[i]->decode_positions(cursors[i], &trackers[i].current, &trackers[i].end);
             if (trackers[i].current == trackers[i].end) return false;
         } else {
             return false;
@@ -613,11 +606,8 @@ static bool verify_proximity_positions_scored(proximity_cursor_t *prox, atl_curs
     if (num_cursors > 32) return false;
 
     for (uint32_t i = 0; i < num_cursors; i++) {
-        if (cursors[i]->type == TERM_CURSOR) {
-            sil_term_t *term = (sil_term_t *)cursors[i];
-            sil_term_decode_positions(term);
-            trackers[i].current = term->term_positions;
-            trackers[i].end = term->term_positions_end;
+        if (cursors[i]->decode_positions) {
+            cursors[i]->decode_positions(cursors[i], &trackers[i].current, &trackers[i].end);
             if (trackers[i].current == trackers[i].end) return false;
         } else {
             return false;

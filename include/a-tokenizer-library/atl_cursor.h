@@ -8,6 +8,7 @@
 #define _atl_cursor_h
 
 #include <inttypes.h>
+#include <stdbool.h>
 #include "a-memory-library/aml_pool.h"
 #include "a-tokenizer-library/atl_token.h"
 
@@ -36,6 +37,7 @@ typedef bool (*atl_cursor_advance_cb)( atl_cursor_t * c );
 typedef bool (*atl_cursor_advance_to_cb)( atl_cursor_t * c, uint32_t id );
 typedef void (*atl_cursor_add_cb)( atl_cursor_t *dest, atl_cursor_t *src );
 typedef double (*atl_cursor_score_cb)( atl_cursor_t * c );
+typedef void (*atl_cursor_decode_positions_cb)(atl_cursor_t *c, uint32_t **pos_start, uint32_t **pos_end);
 
 enum atl_cursor_type { EMPTY_CURSOR = 0, AND_CURSOR = 1, PHRASE_CURSOR = 2, OR_CURSOR = 3, NOT_CURSOR = 4,
                        NORMAL_CURSOR = 5, TERM_CURSOR = 6, PROXIMITY_CURSOR = 7 };
@@ -48,6 +50,8 @@ struct atl_cursor_s {
 
     atl_cursor_add_cb add;
     atl_cursor_score_cb score;
+
+    atl_cursor_decode_positions_cb decode_positions;
 
     enum atl_cursor_type type;
 
