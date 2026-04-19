@@ -35,9 +35,10 @@ atl_cursor_t *atl_cursor_range(aml_pool_t *pool, uint32_t start, uint32_t end);
 typedef bool (*atl_cursor_advance_cb)( atl_cursor_t * c );
 typedef bool (*atl_cursor_advance_to_cb)( atl_cursor_t * c, uint32_t id );
 typedef void (*atl_cursor_add_cb)( atl_cursor_t *dest, atl_cursor_t *src );
+typedef double (*atl_cursor_score_cb)( atl_cursor_t * c );
 
 enum atl_cursor_type { EMPTY_CURSOR = 0, AND_CURSOR = 1, PHRASE_CURSOR = 2, OR_CURSOR = 3, NOT_CURSOR = 4,
-                       NORMAL_CURSOR = 5, TERM_CURSOR = 6 };
+                       NORMAL_CURSOR = 5, TERM_CURSOR = 6, PROXIMITY_CURSOR = 7 };
 
 struct atl_cursor_s {
     aml_pool_t *pool;
@@ -46,6 +47,7 @@ struct atl_cursor_s {
     atl_cursor_advance_cb _advance;
 
     atl_cursor_add_cb add;
+    atl_cursor_score_cb score;
 
     enum atl_cursor_type type;
 
