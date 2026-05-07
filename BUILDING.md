@@ -1,7 +1,7 @@
 # BUILDING
 
 This project: **A Tokenizer Library**
-Version: **0.1.5**
+Version: **0.2.0**
 
 ## Local build
 
