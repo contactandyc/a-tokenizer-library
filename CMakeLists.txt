@@ -8,9 +8,14 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(a_tokenizer_library
-  VERSION 0.1.5
+  VERSION 0.2.0
   LANGUAGES C
 )
+
+if(CMAKE_PREFIX_PATH)
+  include_directories("${CMAKE_PREFIX_PATH}/include")
+  link_directories("${CMAKE_PREFIX_PATH}/lib")
+endif()
 # ── Variant selection for the umbrella alias ──────────────────────────────────
 set(A_BUILD_VARIANT "debug" CACHE STRING
     "Umbrella choice for in-tree linking (debug|memory|static|shared)")
@@ -259,3 +264,4 @@ install(FILES
 
 
 # Dynamically mount all subprojects (apps, examples, tests, etc.)
+# 
