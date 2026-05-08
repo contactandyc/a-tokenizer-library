@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.20)
 
 project(a_tokenizer_library
-  VERSION 0.2.2
+  VERSION 0.2.3
   LANGUAGES C
 )
 
